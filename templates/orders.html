@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Orders</title>
+    <link href='https://fonts.googleapis.com/css?family=PT Sans' rel='stylesheet'>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/order_style.css') }}">
+
+
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="static/styles/images/logo.png">
+                <div class="menu">
+                    <h2 font-family='PT Sans'>Menu</h2>
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('inventory_page') }}">Inventory</a>
+                    <a href="{{ url_for('restock') }}">Restock</a>
+                    <a href="{{ url_for('orders_page') }}">Orders</a>
+                    <a href="#">Refunds</a>
+                    <a href="#">Drug Information</a>
+                    <a href="#">Finances</a>
+                    <a href="#">Demand Forecast</a>
+                </div>
+            </div>
+        </div>
+
+    <div class = "content">
+        <div class="header">
+            <h2 id = "webname" font-weight="normal">Pharmacy Management System</h2>
+    </div>  
+  
+    <main>
+        <h1>Orders</h1>
+        <!--Button that leads to the new order entry page-->
+        <a href="{{ url_for('new_order') }}">
+            <button id = "new-order-btn">New Order</button>
+        </a>
+        <!--Fake buttons for in store and online orders-->
+        <button id="in-store-tab" onclick="openTab('in-store')">In-Store</button>
+        <button id="online-tab" onclick="openTab('online')">Online</button>
+
+            <!--If successful order, flash a message-->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <!--A table of fake orders-->
+        <table id = "orders_table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Location</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Show every order made-->
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order['order_id'] }}</td>
+                    <td>{{ order['date'] }}</td>
+                    <td>{{ order['customer'] }}</td>
+                    <td>{{ order['location'] }}</td>
+                    <td>{{ order['items'] }}</td>
+                    <td>{{ order['amount'] }}</td>
+                    <td>{{ order['cost'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!--Fake button for more orders-->
+        <button id="more-orders" onclick="openTab('more-orders')">More Orders</button>
+        </main>    
+</body>
+</html>

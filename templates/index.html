@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+    <link href='https://fonts.googleapis.com/css?family=PT Sans' rel='stylesheet'>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/Inventory_style.css') }}">
+    <title>Input Form</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="static/styles/images/logo.png">
+                <div class="menu">
+                    <h2 font-family='PT Sans'>Menu</h2>
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('inventory_page') }}">Inventory</a>
+                    <a href="{{ url_for('restock') }}">Restock</a>
+                    <a href="{{ url_for('orders_page') }}">Orders</a>
+                    <a href="#">Refunds</a>
+                    <a href="#">Drug Information</a>
+                    <a href="#">Finances</a>
+                    <a href="#">Demand Forecast</a>
+                </div>
+            </div>
+        </div>
+
+    <div class = "content">
+        <div class="header">
+            <h2 id = "webname" font-weight="normal">Pharmacy Management System</h2>
+    </div>  
+  
+    <h1>Home</h1>
+    <p>navigate to different pages using sidebar. Current pages implemented: Order, Inventory, Restock</p>
+
+    <!-- <a href="{{ url_for('restock') }}">restock</a>
+    <br>
+    <a href="{{ url_for('inventory_page') }}">Inventory</a>
+    <br>
+    <a href="{{ url_for('orders_page') }}">Orders Page</a>
+    <br>   -->
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=PT Sans' rel='stylesheet'>
+    <title>Pharmacy Management System</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/restock_style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- sidebar html elements -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="static/styles/images/logo.png">
+                <div class="menu">
+                    <h2 font-family='PT Sans'>Menu</h2>
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('inventory_page') }}">Inventory</a>
+                    <a href="{{ url_for('restock') }}">Restock</a>
+                    <a href="{{ url_for('orders_page') }}">Orders</a>
+                    <a href="#">Refunds</a>
+                    <a href="#">Drug Information</a>
+                    <a href="#">Finances</a>
+                    <a href="#">Demand Forecast</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- main page html elements -->
+        <div class = "content">
+            <div class="header">
+                <h2 id = "webname" font-weight="normal">Pharmacy Management System</h2>
+            </div>
+            <!-- start of the user input section -->
+            <div class = "enterData">
+                <form id="restockForm" method="POST">
+                    <h1>Restock</h1>
+                    
+                    <div class="form-row">
+                        <!-- drug name-->
+                        <div class="form-group">
+                            <label for="drugName">Item</label>
+                            <input type="text" id="drugName" name="drugName" placeholder="Enter Drug Name" required>
+                            
+                        </div>
+                        
+                        <!-- supplier -->
+                        <div class="form-group">
+                            <label for="supplier">Supplier</label>
+                            <select id="supplier" name="supplier" required>
+                                <option value="" disabled selected>Select Supplier</option>
+                                {% for supplier, details in suppliers.items() %}
+                                    <option value="{{ supplier }}" data-shipping="{{ details[1] }}" data-days="{{ details[0] }}">{{ supplier }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- quantity -->
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" id="quantity" name="quantity" placeholder="" required min="1">
+                        </div>
+
+                        <!-- total price -->
+                        <div class="form-group">
+                            <label for="totalPrice">Price</label>
+                            <div id="totalPrice">
+                                $0.00
+                            </div>
+                        </div>
+                        
+                    <!-- submit button -->
+                    <div class="form-group">
+                        <button class="submit" type="submit">Purchase</button>
+                    </div>
+                </div>
+                </form>
+
+               <!-- error message if invalid drug -->
+                <p1 id="error" style="color:red;">{{ error }}</p1>
+                
+                <!-- table to list purcahses -->
+                <h3 id="purchases">Purchases</h3>
+                <table id="purchaseTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Supplier</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Arrival Date</th>
+                        </tr>
+                    </thead>
+                    <!-- add the items from the db to the table -->
+                    <tbody>
+                        {% for purchase in purchases %}
+                            <tr>
+                                <td>{{ purchase['drug_name'] }}</td>
+                                <td>{{ purchase['supplier'] }}</td>
+                                <td>{{ purchase['quantity'] }}</td>
+                                <td>${{ purchase['total_price'] }}</td>
+                                <td>{{ purchase['arrival_date'] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>         
+        </div>
+    </div>
+
+    
+    <!-- JS script for dynamic updates to the webpage -->
+    <input type="hidden" id="itemsData" value='{{ items | tojson | safe }}'>
+    <script>
+        // get all the data into the JS script
+        const itemsData = JSON.parse(document.getElementById('itemsData').value);
+        const form = document.getElementById('restockForm');
+        const quantityInput = document.getElementById('quantity');
+        const drugNameInput = document.getElementById('drugName');
+        const supplierSelect = document.getElementById('supplier');
+        const totalPriceDisplay = document.getElementById('totalPrice');
+        const errorMessage = document.getElementById('error');
+        const purchaseTable = document.getElementById('purchaseTable').querySelector('tbody');
+        const tax = 0.13;
+
+        // function to calculate total price
+        const calculateTotalPrice = () => {
+            const drugName = drugNameInput.value.trim().toLowerCase();
+            const quantity = parseInt(quantityInput.value, 10);
+            const shippingFee = parseFloat(supplierSelect.options[supplierSelect.selectedIndex].getAttribute('data-shipping')) || 0;
+            // check if name exists and quantity is above 0 before updating the price
+            if (itemsData[drugName] && quantity > 0) {
+                const totalPrice = ((itemsData[drugName] * quantity) + shippingFee) * (1 + tax);
+                totalPriceDisplay.innerHTML = `$${totalPrice.toFixed(2)}`;
+            } else {
+                totalPriceDisplay.innerHTML = '$0.00';
+            }
+        };
+        
+        // use event listeners to update the webpage when submitted
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // block the webpage from refreshing 
+            const drugName = drugNameInput.value.trim().toLowerCase();
+            const quantity = parseInt(quantityInput.value, 10);
+            if (itemsData[drugName] && quantity > 0) {
+                errorMessage.innerHTML = "";
+                form.submit(); // allow form to submit to go to POST
+            } else {
+                errorMessage.innerHTML = "Please enter a valid drug name";
+            }
+        });
+
+    // use event listeners to update if quantity, drug name, or supplier is changed
+    quantityInput.addEventListener('input', calculateTotalPrice);
+    drugNameInput.addEventListener('input', calculateTotalPrice);
+    supplierSelect.addEventListener('change', calculateTotalPrice);
+</script>
+    
+</body>
+</html>
