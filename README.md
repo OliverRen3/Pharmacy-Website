@@ -9,7 +9,7 @@ How to Run the Project (windows):
 
 3. run the app.py file 
 
-4. enter the local host url provided by the app
+4. enter the local host url provided by the app into desired search engine (or quick on the link)
 
    
 
