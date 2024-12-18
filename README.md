@@ -11,7 +11,7 @@ How to Run the Project (windows):
 
 4. enter the local host url provided by the app into desired search engine (or quick on the link)
 
-5. use `control + c on` the terminal to close the local host server
+5. use `control + c` on the terminal to close the local host server
 
    
 
